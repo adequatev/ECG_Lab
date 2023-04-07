@@ -2,6 +2,10 @@
 #define	HEADER_H
 
 #include <math.h>
+#include <stdio.h>
+
+#define ToRadian(x) ((x) * M_PI / 180.0f)
+#define ToDegree(x) ((x) * 180.0f / M_PI)
 
 #define ToRadian(x) ((x) * M_PI / 180.0f)
 #define ToDegree(x) ((x) * 180.0f / M_PI)
@@ -22,6 +26,15 @@ struct Vector3f
         y = _y;
         z = _z;
     }
+
+    Vector3f Cross(const Vector3f& v) const;
+
+    Vector3f& Normalize();
+
+    void Print() const
+    {
+        printf("(%.02f, %.02f, %.02f", x, y, z);
+    }
 };
 
 class Matrix4f
@@ -31,6 +44,7 @@ public:
 
     Matrix4f()
     {
+        
     }
 
 
@@ -57,7 +71,13 @@ public:
 
         return Ret;
     }
+
+    void InitScaleTransform(float ScaleX, float ScaleY, float ScaleZ);
+    void InitRotateTransform(float RotateX, float RotateY, float RotateZ);
+    void InitTranslationTransform(float x, float y, float z);
+    void InitCameraTransform(const Vector3f& Target, const Vector3f& Up);
+    void InitPersProjTransform(float FOV, float Width, float Height, float zNear, float zFar);
 };
 
 
-#endif	/* MATH_3D_H */
+#endif
