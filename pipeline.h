@@ -33,7 +33,12 @@ public:
         m_rotateInfo.y = RotateY;
         m_rotateInfo.z = RotateZ;
     }
-
+    void SetCamera(const Vector3f& Pos, const Vector3f& Target, const Vector3f& Up)
+    {
+        m_camera.Pos = Pos;
+        m_camera.Target = Target;
+        m_camera.Up = Up;
+    }
     void SetPerspectiveProj(float FOV, float Width, float Height, float zNear, float zFar)
     {
         m_persProj.FOV = FOV;
@@ -62,6 +67,13 @@ private:
         float zNear;
         float zFar;
     } m_persProj;
+
+    struct {
+        Vector3f Pos;
+        Vector3f Target;
+        Vector3f Up;
+    } m_camera;
+
 
     Matrix4f m_transformation;
 };
