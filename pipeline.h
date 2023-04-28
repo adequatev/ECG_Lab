@@ -1,7 +1,7 @@
 #ifndef PIPELINE_H
 #define	PIPELINE_H
 
-#include "header.h"
+#include "mymath3d.h"
 
 class Pipeline
 {
@@ -33,12 +33,7 @@ public:
         m_rotateInfo.y = RotateY;
         m_rotateInfo.z = RotateZ;
     }
-    void SetCamera(const Vector3f& Pos, const Vector3f& Target, const Vector3f& Up)
-    {
-        m_camera.Pos = Pos;
-        m_camera.Target = Target;
-        m_camera.Up = Up;
-    }
+
     void SetPerspectiveProj(float FOV, float Width, float Height, float zNear, float zFar)
     {
         m_persProj.FOV = FOV;
@@ -48,14 +43,21 @@ public:
         m_persProj.zFar = zFar;
     }
 
+    void SetCamera(const Vector3f& Pos, const Vector3f& Target, const Vector3f& Up)
+    {
+        m_camera.Pos = Pos;
+        m_camera.Target = Target;
+        m_camera.Up = Up;
+    }
+
+
+    const Matrix4f& GetWVPTrans();
+
+    const Matrix4f& GetWorldTrans();
+
     const Matrix4f* GetTrans();
 
 private:
-    void InitScaleTransform(Matrix4f& m) const;
-    void InitRotateTransform(Matrix4f& m) const;
-    void InitTranslationTransform(Matrix4f& m) const;
-    void InitPerspectiveProj(Matrix4f& m) const;
-
     Vector3f m_scale;
     Vector3f m_worldPos;
     Vector3f m_rotateInfo;
@@ -74,9 +76,11 @@ private:
         Vector3f Up;
     } m_camera;
 
-
+    Matrix4f m_WVPtransformation;
+    Matrix4f m_WorldTransformation;
     Matrix4f m_transformation;
 };
 
 
 #endif	/* PIPELINE_H */
+
