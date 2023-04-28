@@ -1,1 +1,1 @@
-C:\Users\vadim\source\repos\Lab_openGL\x64\Debug\Lab_openGL.exe
+C:\Users\Студент\source\repos\Lab_openGL\x64\Debug\Lab_openGL.exe

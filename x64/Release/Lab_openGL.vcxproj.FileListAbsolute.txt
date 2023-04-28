@@ -1,0 +1,2 @@
+C:\Users\Студент\source\repos\Lab_openGL\x64\Release\Lab_openGL.exe
+C:\Users\vadim\source\repos\Lab_openGL\x64\Release\Lab_openGL.exe
