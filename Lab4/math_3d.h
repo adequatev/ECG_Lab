@@ -18,10 +18,10 @@
 
 #ifndef MATH_3D_H
 #define	MATH_3D_H
-
+#define M_PI 3.1415
 #include <stdio.h>
 #include <math.h>
-#define M_PI 3.1415
+
 #define ToRadian(x) ((x) * M_PI / 180.0f)
 #define ToDegree(x) ((x) * 180.0f / M_PI)
 
@@ -132,6 +132,14 @@ inline Vector3f operator*(const Vector3f& l, float f)
     return Ret;
 }
 
+struct PersProjInfo
+{
+    float FOV;
+    float Width; 
+    float Height;
+    float zNear;
+    float zFar;
+};
 
 class Matrix4f
 {
@@ -166,12 +174,19 @@ public:
 
         return Ret;
     }
+    
+    void Print()
+    {
+        for (int i = 0 ; i < 4 ; i++) {
+            printf("%f %f %f %f\n", m[i][0], m[i][1], m[i][2], m[i][3]);
+        }       
+    }
 
     void InitScaleTransform(float ScaleX, float ScaleY, float ScaleZ);
     void InitRotateTransform(float RotateX, float RotateY, float RotateZ);
     void InitTranslationTransform(float x, float y, float z);
     void InitCameraTransform(const Vector3f& Target, const Vector3f& Up);
-    void InitPersProjTransform(float FOV, float Width, float Height, float zNear, float zFar);
+    void InitPersProjTransform(const PersProjInfo& p);
 };
 
 

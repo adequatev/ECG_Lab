@@ -16,31 +16,27 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef TEXTURE_H
-#define	TEXTURE_H
+#ifndef UTIL_H
+#define	UTIL_H
 
-#include <string>
+#include <stdlib.h>
+#include <stdio.h>
 
-#include <GL/glew.h>
-#include <Magick++.h>
+#define ARRAY_SIZE_IN_ELEMENTS(a) (sizeof(a)/sizeof(a[0]))
 
-class Texture
-{
-public:
-    Texture(GLenum TextureTarget, const std::string& FileName);
+#define INVALID_OGL_VALUE 0xFFFFFFFF
 
-    bool Load();
+#define SAFE_DELETE(p) if (p) { delete p; p = NULL; }
 
-    void Bind(GLenum TextureUnit);
+#define GLCheckError()  \
+{       \
+    GLenum Error = glGetError();    \
+\
+    if (Error != GL_NO_ERROR) { \
+        printf("OpenGL error in %s:%d: 0x%x\n", __FILE__, __LINE__, Error);  \
+        exit(0);    \
+    }   \
+}
 
-private:
-    std::string m_fileName;
-    GLenum m_textureTarget;
-    GLuint m_textureObj;
-    Magick::Image* m_pImage;
-    Magick::Blob m_blob;
-};
-
-
-#endif	/* TEXTURE_H */
+#endif	/* UTIL_H */
 

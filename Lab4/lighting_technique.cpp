@@ -1,3 +1,21 @@
+/*
+
+	Copyright 2011 Etay Meiri
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include <limits.h>
 #include <string.h>
 
@@ -93,9 +111,8 @@ float CalcShadowFactor(vec4 LightSpacePos)                                      
     vec2 UVCoords;                                                                          \n\
     UVCoords.x = 0.5 * ProjCoords.x + 0.5;                                                  \n\
     UVCoords.y = 0.5 * ProjCoords.y + 0.5;                                                  \n\
-    float z = 0.5 * ProjCoords.z + 0.5;                                                     \n\
     float Depth = texture(gShadowMap, UVCoords).x;                                          \n\
-    if (Depth < z + 0.00001)                                                                 \n\
+    if (Depth <= (ProjCoords.z + 0.005))                                                     \n\
         return 0.5;                                                                         \n\
     else                                                                                    \n\
         return 1.0;                                                                         \n\
@@ -180,7 +197,7 @@ void main()                                                                     
 
 
 LightingTechnique::LightingTechnique()
-{
+{   
 }
 
 bool LightingTechnique::Init()
@@ -202,8 +219,10 @@ bool LightingTechnique::Init()
     }
 
     m_WVPLocation = GetUniformLocation("gWVP");
+    m_LightWVPLocation = GetUniformLocation("gLightWVP");
     m_WorldMatrixLocation = GetUniformLocation("gWorld");
     m_samplerLocation = GetUniformLocation("gSampler");
+    m_shadowMapLocation = GetUniformLocation("gShadowMap");
     m_eyeWorldPosLocation = GetUniformLocation("gEyeWorldPos");
     m_dirLightLocation.Color = GetUniformLocation("gDirectionalLight.Base.Color");
     m_dirLightLocation.AmbientIntensity = GetUniformLocation("gDirectionalLight.Base.AmbientIntensity");
@@ -214,14 +233,12 @@ bool LightingTechnique::Init()
     m_numPointLightsLocation = GetUniformLocation("gNumPointLights");
     m_numSpotLightsLocation = GetUniformLocation("gNumSpotLights");
 
-    m_LightWVPLocation = GetUniformLocation("gLightWVP");
-    m_shadowMapLocation = GetUniformLocation("gShadowMap");
-
-
     if (m_dirLightLocation.AmbientIntensity == INVALID_UNIFORM_LOCATION ||
         m_WVPLocation == INVALID_UNIFORM_LOCATION ||
+        m_LightWVPLocation == INVALID_UNIFORM_LOCATION ||
         m_WorldMatrixLocation == INVALID_UNIFORM_LOCATION ||
         m_samplerLocation == INVALID_UNIFORM_LOCATION ||
+        m_shadowMapLocation == INVALID_UNIFORM_LOCATION ||
         m_eyeWorldPosLocation == INVALID_UNIFORM_LOCATION ||
         m_dirLightLocation.Color == INVALID_UNIFORM_LOCATION ||
         m_dirLightLocation.DiffuseIntensity == INVALID_UNIFORM_LOCATION ||
@@ -314,19 +331,16 @@ bool LightingTechnique::Init()
     return true;
 }
 
-void LightingTechnique::SetLightWVP(const Matrix4f& LightWVP)
-{
-    glUniformMatrix4fv(m_LightWVPLocation, 1, GL_TRUE, (const GLfloat*)LightWVP.m);
-}
-
-void LightingTechnique::SetShadowMapTextureUnit(unsigned int TextureUnit)
-{
-    glUniform1i(m_shadowMapLocation, TextureUnit);
-}
 
 void LightingTechnique::SetWVP(const Matrix4f& WVP)
 {
-    glUniformMatrix4fv(m_WVPLocation, 1, GL_TRUE, (const GLfloat*)WVP.m);
+    glUniformMatrix4fv(m_WVPLocation, 1, GL_TRUE, (const GLfloat*)WVP.m);    
+}
+
+
+void LightingTechnique::SetLightWVP(const Matrix4f& LightWVP)
+{
+    glUniformMatrix4fv(m_LightWVPLocation, 1, GL_TRUE, (const GLfloat*)LightWVP.m);
 }
 
 
@@ -342,6 +356,12 @@ void LightingTechnique::SetTextureUnit(unsigned int TextureUnit)
 }
 
 
+void LightingTechnique::SetShadowMapTextureUnit(unsigned int TextureUnit)
+{
+    glUniform1i(m_shadowMapLocation, TextureUnit);
+}
+
+
 void LightingTechnique::SetDirectionalLight(const DirectionalLight& Light)
 {
     glUniform3f(m_dirLightLocation.Color, Light.Color.x, Light.Color.y, Light.Color.z);
@@ -352,25 +372,29 @@ void LightingTechnique::SetDirectionalLight(const DirectionalLight& Light)
     glUniform1f(m_dirLightLocation.DiffuseIntensity, Light.DiffuseIntensity);
 }
 
+
 void LightingTechnique::SetEyeWorldPos(const Vector3f& EyeWorldPos)
 {
     glUniform3f(m_eyeWorldPosLocation, EyeWorldPos.x, EyeWorldPos.y, EyeWorldPos.z);
 }
+
 
 void LightingTechnique::SetMatSpecularIntensity(float Intensity)
 {
     glUniform1f(m_matSpecularIntensityLocation, Intensity);
 }
 
+
 void LightingTechnique::SetMatSpecularPower(float Power)
 {
     glUniform1f(m_matSpecularPowerLocation, Power);
 }
 
+
 void LightingTechnique::SetPointLights(unsigned int NumLights, const PointLight* pLights)
 {
     glUniform1i(m_numPointLightsLocation, NumLights);
-
+    
     for (unsigned int i = 0 ; i < NumLights ; i++) {
         glUniform3f(m_pointLightsLocation[i].Color, pLights[i].Color.x, pLights[i].Color.y, pLights[i].Color.z);
         glUniform1f(m_pointLightsLocation[i].AmbientIntensity, pLights[i].AmbientIntensity);
@@ -381,6 +405,7 @@ void LightingTechnique::SetPointLights(unsigned int NumLights, const PointLight*
         glUniform1f(m_pointLightsLocation[i].Atten.Exp, pLights[i].Attenuation.Exp);
     }
 }
+
 
 void LightingTechnique::SetSpotLights(unsigned int NumLights, const SpotLight* pLights)
 {

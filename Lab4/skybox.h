@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2011 Etay Meiri
+	Copyright 2011 Etay Meiri
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,18 +30,18 @@ public:
     SkyBox(const Camera* pCamera, const PersProjInfo& p);
 
     ~SkyBox();
-
+    
     bool Init(const string& Directory,
-        const string& PosXFilename,
-        const string& NegXFilename,
-        const string& PosYFilename,
-        const string& NegYFilename,
-        const string& PosZFilename,
-        const string& NegZFilename);
-
+              const string& PosXFilename,
+              const string& NegXFilename,
+              const string& PosYFilename,
+              const string& NegYFilename,
+              const string& PosZFilename,
+              const string& NegZFilename);
+    
     void Render();
-
-private:
+    
+private:    
     SkyboxTechnique* m_pSkyboxTechnique;
     const Camera* m_pCamera;
     CubemapTexture* m_pCubemapTex;
