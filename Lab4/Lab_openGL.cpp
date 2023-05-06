@@ -17,10 +17,9 @@
 #include "Util.h"
 
 #include "mesh.h"
-#include "skybox.h"
 //#include "shadow_map_fbo.h"
 //#include "shadow_map_technique.h"
-//#include "engine_common.h"
+#include "engine_common.h"
 
 GLuint VBO;
 GLuint IBO;
@@ -31,7 +30,7 @@ Camera* pGameCamera = NULL;
 #define WINDOW_WIDTH 1024
 #define WINDOW_HEIGHT 768
 
-#define TUT25
+#define TUT26
 
 //17 ambient
 //18 diffuse/directional
@@ -2997,19 +2996,19 @@ public:
 
         m_pTankMesh = new Mesh();
 
-        if (!m_pTankMesh->LoadMesh("phoenix_ugv.md2")) {
+        if (!m_pTankMesh->LoadMesh("../Content/phoenix_ugv.md2")) {
             return false;
         }
 
         m_pSkyBox = new SkyBox(m_pGameCamera, m_persProjInfo);
 
         if (!m_pSkyBox->Init(".",
-            "sp3right.jpg",
-            "sp3left.jpg",
-            "sp3top.jpg",
-            "sp3bot.jpg",
-            "sp3front.jpg",
-            "sp3back.jpg")) {
+            "../Content/sp3right.jpg",
+            "../Content/sp3left.jpg",
+            "../Content/sp3top.jpg",
+            "../Content/sp3bot.jpg",
+            "../Content/sp3front.jpg",
+            "../Content/sp3back.jpg")) {
             return false;
         }
 

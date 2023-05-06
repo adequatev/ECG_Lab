@@ -32,8 +32,6 @@ public:
     virtual void RenderSceneCB() = 0;
 
     virtual void IdleCB() = 0;
-    
-    //virtual ~ICallbacks() {};
 };
 
 #endif	/* I3DAPPLICATION_H */
